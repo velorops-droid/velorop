@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Facebook, Clock, Video, ShieldCheck, Menu, X, ArrowRight, Star, ChevronDown, ChevronUp, MessageSquare, Moon, Sun, Check, AlertCircle, Download, Monitor } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Facebook, Clock, Video, ShieldCheck, Menu, X, ArrowRight, Star, ChevronDown, ChevronUp, MessageSquare, Moon, Sun, Check, AlertCircle, Download, Monitor, Sparkles, Server, Zap, Shield, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
 import { Toast } from './components/Toast';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import { FeaturesSection, ArchitectureSection, AudienceSection, RoadmapSection } from './components/Sections';
 import { VelorOpsLogo } from './components/Logo';
+import { VelorOpsStudio } from './components/VelorOpsStudio';
+
+// Generated Facebook automation tech illustration path resolved by Vite
+const fbAutomationIllustration = '/src/assets/images/facebook_automation_1783571681829.jpg';
 
 export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -157,7 +161,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans selection:bg-blue-500/20 selection:text-blue-200 transition-colors duration-300">
       <Helmet>
         <title>VelorOps - Automate Your Facebook Videos</title>
         <meta name="description" content="VelorOps: The ultimate platform for scheduling, managing, and automating your Facebook video content." />
@@ -190,8 +194,8 @@ export default function App() {
         style={{ scaleX }}
       />
 
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+      {/* Navigation - Premium Dark Sleek Theme to support White Logo Text perfectly */}
+      <nav className="sticky top-0 z-50 w-full bg-slate-950/90 border-b border-slate-900 backdrop-blur-md transition-colors duration-300 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex items-center gap-2">
@@ -205,7 +209,7 @@ export default function App() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-2 py-1"
+                  className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-2 py-1"
                 >
                   {link.name}
                 </a>
@@ -213,7 +217,7 @@ export default function App() {
               
               <button 
                 onClick={toggleTheme} 
-                className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 overflow-hidden relative flex items-center justify-center w-9 h-9"
+                className="p-2 text-slate-300 hover:bg-slate-900 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 overflow-hidden relative flex items-center justify-center w-9 h-9"
                 aria-label="Toggle theme"
               >
                 <AnimatePresence mode="wait">
@@ -225,15 +229,15 @@ export default function App() {
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     className="absolute flex items-center justify-center"
                   >
-                    {themeMode === 'light' ? <Sun className="w-5 h-5" /> : themeMode === 'dark' ? <Moon className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+                    {themeMode === 'light' ? <Sun className="w-5 h-5 text-amber-400" /> : themeMode === 'dark' ? <Moon className="w-5 h-5 text-blue-400" /> : <Monitor className="w-5 h-5" />}
                   </motion.div>
                 </AnimatePresence>
               </button>
-              <button className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-5 py-2.5 rounded-lg font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+              <button className="flex items-center gap-2 bg-slate-900 hover:bg-slate-850 text-white px-5 py-2.5 rounded-lg font-medium border border-slate-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                 <Download className="w-4 h-4" />
                 <span>Download</span>
               </button>
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-sm shadow-blue-200 dark:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
+              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-md shadow-blue-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
                 <Facebook className="w-4 h-4" />
                 <span>Login</span>
               </button>
@@ -243,7 +247,7 @@ export default function App() {
             <div className="md:hidden flex items-center gap-4">
               <button 
                 onClick={toggleTheme} 
-                className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 overflow-hidden relative flex items-center justify-center w-9 h-9"
+                className="p-2 text-slate-300 hover:bg-slate-900 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 overflow-hidden relative flex items-center justify-center w-9 h-9"
                 aria-label="Toggle theme"
               >
                 <AnimatePresence mode="wait">
@@ -255,12 +259,12 @@ export default function App() {
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     className="absolute flex items-center justify-center"
                   >
-                    {themeMode === 'light' ? <Sun className="w-5 h-5" /> : themeMode === 'dark' ? <Moon className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+                    {themeMode === 'light' ? <Sun className="w-5 h-5 text-amber-400" /> : themeMode === 'dark' ? <Moon className="w-5 h-5 text-blue-400" /> : <Monitor className="w-5 h-5" />}
                   </motion.div>
                 </AnimatePresence>
               </button>
               <button
-                className="p-2 text-slate-600 dark:text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
+                className="p-2 text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-expanded={isMobileMenuOpen}
                 aria-label="Toggle navigation menu"
@@ -278,19 +282,23 @@ export default function App() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-4 space-y-1 overflow-hidden transition-colors duration-300"
+              className="md:hidden bg-slate-950 border-b border-slate-900 px-4 pt-2 pb-4 space-y-1 overflow-hidden transition-all duration-300 text-white"
             >
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
-                  className="block px-3 py-3 text-base font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors"
+                  className="block px-3 py-3 text-base font-medium text-slate-300 hover:bg-slate-900 hover:text-blue-400 rounded-md transition-colors"
                 >
                   {link.name}
                 </a>
               ))}
-              <div className="pt-2">
+              <div className="pt-2 flex flex-col gap-2">
+                <button className="w-full flex justify-center items-center gap-2 bg-slate-900 hover:bg-slate-850 text-white px-4 py-3 rounded-lg font-medium transition-colors border border-slate-800">
+                  <Download className="w-4 h-4" />
+                  <span>Download Desktop App</span>
+                </button>
                 <button className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
                   <Facebook className="w-5 h-5" />
                   <span>Login with Facebook</span>
@@ -301,40 +309,156 @@ export default function App() {
         </AnimatePresence>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-32 overflow-hidden">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeInVariants}
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50 text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 transition-colors duration-300">
-            <span className="flex h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-500"></span>
-            Official Facebook Graph API Integration
+      {/* Hero Section Redesigned with Dual-Grid and Real-Human Interactive Studio Mockup */}
+      <section className="relative pt-20 pb-32 overflow-hidden bg-slate-950 text-white border-b border-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Headline and Copy */}
+            <div className="lg:col-span-5 text-left space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+                Meta Partner Approved Graph API
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-br from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                Automate Your Facebook Videos.
+              </h1>
+              
+              <p className="text-base md:text-lg text-slate-400 leading-relaxed max-w-xl">
+                Scale your audience distribution effortlessly. Securely connect your official Graph API credentials, schedule videos in bulk, generate AI captions, and access advanced performance telemetry in one place.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-7 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/20">
+                  <Facebook className="w-4.5 h-4.5 fill-current" />
+                  <span>Connect with Facebook</span>
+                </button>
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-850 text-slate-200 px-7 py-3.5 rounded-xl font-bold text-sm border border-slate-800 transition-all">
+                  <Download className="w-4.5 h-4.5" />
+                  <span>Get Desktop App</span>
+                </button>
+              </div>
+
+              {/* Trust badges */}
+              <div className="pt-8 border-t border-slate-900/60 flex items-center gap-6 text-xs text-slate-500">
+                <div className="flex items-center gap-1.5">
+                  <Shield className="w-4 h-4 text-emerald-500" />
+                  <span>32-byte AES Security</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Zap className="w-4 h-4 text-blue-500" />
+                  <span>No Cron Jobs Needed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive SaaS Studio Mockup Panel */}
+            <div className="lg:col-span-7 w-full">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                className="relative"
+              >
+                {/* Decorative glow behind dashboard mockup */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-xl opacity-30 pointer-events-none -z-10"></div>
+                <VelorOpsStudio />
+              </motion.div>
+            </div>
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 max-w-4xl mx-auto leading-tight transition-colors duration-300">
-            Automate Your Facebook Videos with <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">VelorOps</span>
-          </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-300">
-            Save hours of manual work. Schedule, manage, and auto-post your video content to Facebook while maximizing engagement and reach.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-200 dark:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
-              <Facebook className="w-6 h-6" />
-              <span>Login with Facebook</span>
-            </button>
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
-              <Download className="w-6 h-6" />
-              <span>Download Desktop App</span>
-            </button>
+        </div>
+      </section>
+
+      {/* Modern Section: Facebook Automation System Architecture showcasing the generated illustration */}
+      <section className="py-24 bg-slate-900/40 dark:bg-slate-950 border-b border-slate-900 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Left Column: Visual illustration framed with extreme developer polish */}
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInVariants}
+              className="relative group"
+            >
+              {/* Outer Glow */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-all pointer-events-none"></div>
+              
+              <div className="relative bg-slate-950 rounded-2xl border border-slate-800 p-3 overflow-hidden shadow-2xl">
+                {/* Simulated Visual Window Header */}
+                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-900 mb-3 text-xs text-slate-500 font-mono">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
+                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
+                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
+                  </div>
+                  <span>fb_automation_infrastructure_payload.png</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+                </div>
+                
+                {/* The Generated Tech Illustration Image */}
+                <img 
+                  src={fbAutomationIllustration} 
+                  alt="VelorOps Facebook video automation flow diagram and tech architecture visual representation" 
+                  className="w-full h-auto rounded-xl object-cover hover:scale-[1.01] transition-transform duration-500"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Annotation Badges overlay */}
+                <div className="absolute bottom-6 left-6 bg-slate-950/90 border border-slate-800 backdrop-blur-md p-3.5 rounded-xl shadow-xl flex items-center gap-3">
+                  <div className="h-8.5 w-8.5 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                    <Server className="w-4.5 h-4.5" />
+                  </div>
+                  <div>
+                    <span className="block text-xs font-bold text-white">VelorOps Automation Engine</span>
+                    <span className="block text-[10px] text-slate-500">Official Graph API v19.0 Integration</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Column: Architectural Highlights */}
+            <div className="space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+                <Zap className="w-3.5 h-3.5 text-indigo-400" />
+                High-Performance Automation
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+                Engineering Zero-Lag Publishing Protocols
+              </h2>
+              
+              <p className="text-slate-400 text-base leading-relaxed">
+                Most platforms schedule videos by running continuous server cron jobs that overload and lead to frequent failures. VelorOps leverages native Meta Graph endpoints to offload queue schedules straight to Facebook servers. 
+              </p>
+
+              <div className="space-y-4 pt-4">
+                <div className="flex gap-4 items-start">
+                  <div className="h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
+                    <Check className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white">Pre-Authorized Chunked Uploads</h4>
+                    <p className="text-xs text-slate-400 mt-1">Easily push heavy 4K videos up to 4GB. Our secure background queue handles chunked uploads automatically.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
+                    <Check className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white">Encryption Key Rotation</h4>
+                    <p className="text-xs text-slate-400 mt-1">Security-first. Your access tokens are refreshed using randomized salt vectors and encrypted with rotating military-grade hashes.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400 transition-colors duration-300">Secure, compliant, and verified by Facebook.</p>
-        </motion.div>
-        
-        {/* Background Decorative Elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-100/50 dark:bg-blue-900/10 rounded-full blur-3xl -z-10 opacity-50 pointer-events-none transition-colors duration-300"></div>
+        </div>
       </section>
 
       <FeaturesSection />
@@ -343,7 +467,7 @@ export default function App() {
       <RoadmapSection />
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+      <section className="py-24 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial="hidden"
@@ -355,6 +479,7 @@ export default function App() {
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors duration-300">Trusted by Creators and Agencies</h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto transition-colors duration-300">See how VelorOps is saving time and boosting engagement for our users.</p>
           </motion.div>
+
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
