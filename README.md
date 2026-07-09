@@ -1,5 +1,5 @@
 <div align="center">
-<img width="1200" height="475" alt="Velorop" src="https://velorop.vercel.app/logo.png" />
+<img width="1200" height="500" alt="Velorop" src="https://velorop.vercel.app/logo.png" />
 </div>
 
 # Run
