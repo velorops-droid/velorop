@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Facebook, Clock, Video, ShieldCheck, Menu, X, ArrowRight, Star, ChevronDown, ChevronUp, MessageSquare, Moon, Sun, Check, AlertCircle, Download, Monitor, Sparkles, Server, Zap, Shield, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
+import { Analytics } from '@vercel/analytics/react';
 import { Toast } from './components/Toast';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import { FeaturesSection, ArchitectureSection, AudienceSection, RoadmapSection } from './components/Sections';
@@ -954,6 +955,7 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
+      <Analytics />
     </div>
   );
 }
