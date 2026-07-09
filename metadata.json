@@ -1,0 +1,8 @@
+{
+  "name": "Remix: VelorOps Landing Page",
+  "description": "Marketing and legal hub for VelorOps Facebook Video Automation App.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
