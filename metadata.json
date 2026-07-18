@@ -1,6 +1,6 @@
 {
-  "name": "Remix: VelorOps Landing Page",
-  "description": "Marketing and legal hub for VelorOps Facebook Video Automation App.",
+  "name": "VelorOps Enterprise Platform",
+  "description": "Enterprise-grade AI Social Media Operations and desktop automation platform.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

@@ -1,159 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { Facebook, Clock, Video, ShieldCheck, Menu, X, ArrowRight, Star, ChevronDown, ChevronUp, MessageSquare, Moon, Sun, Check, AlertCircle, Download, Monitor, Sparkles, Server, Zap, Shield, ExternalLink } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
-import { Toast } from './components/Toast';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { Facebook, Video, Download, Eye, Check, ExternalLink, ChevronUp, Server, Zap, X, Upload, Sparkles, ChevronRight, ChevronLeft } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'motion/react';
 import { LoadingOverlay } from './components/LoadingOverlay';
-import { FeaturesSection, ArchitectureSection, AudienceSection, RoadmapSection } from './components/Sections';
 import { VelorOpsLogo } from './components/Logo';
 import { VelorOpsStudio } from './components/VelorOpsStudio';
+import { WorkflowCarousel } from './components/WorkflowCarousel';
+import { StatsSection } from './components/StatsSection';
+import { SystemStatusSection } from './components/SystemStatusSection';
+import { NetworkVolumeChart } from './components/NetworkVolumeChart';
+import { VideoTestimonialsSection } from './components/VideoTestimonialsSection';
+import { ImpactMetrics } from './components/ImpactMetrics';
+import { FacebookPreviewPanel } from './components/FacebookPreviewPanel';
+import { SEO } from './components/SEO';
+import { ShareSocial } from './components/ShareSocial';
+import { MainLayout } from './components/MainLayout';
 
-// Generated Facebook automation tech illustration path resolved by Vite
+// Sub-page component imports
+import FeaturesPage from './pages/FeaturesPage';
+import PricingPage from './pages/PricingPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import FAQPage from './pages/FAQPage';
+import { DataDeletionPage } from './pages/DataDeletionPage';
+import { DashboardPage } from './pages/DashboardPage';
+
 const fbAutomationIllustration = '/src/assets/images/facebook_automation_1783571681829.jpg';
 
-export default function App() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [isAnnual, setIsAnnual] = useState(false);
-  type Theme = 'light' | 'dark' | 'system';
-  const [themeMode, setThemeMode] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as Theme) || 'system';
-    }
-    return 'system';
-  });
+const SecurityTrustBanner = () => {
+  return (
+    <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center lg:justify-start items-center">
+      <div className="flex items-center gap-2">
+        <div className="p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-emerald-500 border border-zinc-200 dark:border-zinc-800">
+          <Check className="w-4 h-4" />
+        </div>
+        <span className="font-semibold text-zinc-800 dark:text-zinc-200">Meta API Compliant</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-emerald-500 border border-zinc-200 dark:border-zinc-800">
+          <Check className="w-4 h-4" />
+        </div>
+        <span className="font-semibold text-zinc-800 dark:text-zinc-200">32-Byte Token Encryption</span>
+      </div>
+    </div>
+  );
+};
 
-  // New features
-  const [isLoading, setIsLoading] = useState(true);
-  const [toastMessage, setToastMessage] = useState('');
-  const [isToastOpen, setIsToastOpen] = useState(false);
+function LandingPage() {
+  const navigate = useNavigate();
+  const [isPreviewPanelOpen, setIsPreviewPanelOpen] = useState(false);
+  const [isOnboardingVideoOpen, setIsOnboardingVideoOpen] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // Form states
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const maxMessageLength = 500;
-
-  // Simulate loading
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1200);
-    return () => clearTimeout(timer);
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 600);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Scroll progress
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
-
-  // Dark mode auto system mode logic
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const applyTheme = (e: MediaQueryList | MediaQueryListEvent) => {
-      const shouldBeDark = themeMode === 'dark' || (themeMode === 'system' && e.matches);
-      
-      if (shouldBeDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-
-    applyTheme(mediaQuery);
-
-    const listener = (e: MediaQueryListEvent) => applyTheme(e);
-    mediaQuery.addEventListener('change', listener);
-    return () => mediaQuery.removeEventListener('change', listener);
-  }, [themeMode]);
-
-  const toggleTheme = () => {
-    let nextTheme: Theme;
-    if (themeMode === 'system') nextTheme = 'light';
-    else if (themeMode === 'light') nextTheme = 'dark';
-    else nextTheme = 'system';
-
-    setThemeMode(nextTheme);
-    if (nextTheme === 'system') {
-      localStorage.removeItem('theme');
-    } else {
-      localStorage.setItem('theme', nextTheme);
-    }
-  };
-
-  const navLinks = [
-    { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Privacy', href: '#privacy' },
-    { name: 'Terms', href: '#terms' },
-    { name: 'FAQ', href: '#faq' },
-  ];
-
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setIsMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
-
-  const validateEmail = (val: string) => {
-    setEmail(val);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (val && !emailRegex.test(val)) {
-      setEmailError('Please enter a valid email address');
-    } else {
-      setEmailError('');
-    }
-  };
-
-  const faqs = [
-    {
-      question: "What are the limitations of the Facebook Graph API?",
-      answer: "The Facebook Graph API has rate limits to prevent spam. VelorOps automatically manages these limits by intelligently spacing out your automated posts, ensuring you stay within Facebook's guidelines and keep your account safe."
-    },
-    {
-      question: "How secure is my account information?",
-      answer: "Your security is our top priority. We use 32-byte military-grade encryption for all access tokens. We never store your Facebook password, and you can revoke our access at any time directly from your Facebook settings."
-    },
-    {
-      question: "Can I manage multiple Facebook Pages?",
-      answer: "Yes! Depending on your subscription plan, you can connect and automate video posting for multiple Facebook Pages from a single VelorOps dashboard."
-    },
-    {
-      question: "What happens if I cancel my subscription?",
-      answer: "If you cancel, your automated posts will continue until the end of your billing cycle. After that, your data is securely stored for 30 days before being permanently deleted, allowing you time to resubscribe without losing your setup."
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah Jenkins",
-      role: "Social Media Manager",
-      content: "VelorOps has completely transformed our workflow. We schedule a month's worth of video content in just a few hours. The reliability of the API integration is unmatched.",
-      rating: 5
-    },
-    {
-      name: "Marcus Thorne",
-      role: "Content Creator",
-      content: "I was always worried about third-party apps getting my account banned. VelorOps' transparency and adherence to Meta's security policies give me total peace of mind.",
-      rating: 5
-    },
-    {
-      name: "Elena Rodriguez",
-      role: "Digital Marketing Agency Owner",
-      content: "Managing video content for 10+ clients used to be a nightmare. VelorOps streamlined everything. The interface is clean, and the automated posting just works.",
-      rating: 5
-    }
-  ];
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
 
   const fadeInVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -161,208 +76,128 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans selection:bg-blue-500/20 selection:text-blue-200 transition-colors duration-300">
-      <Helmet>
-        <title>VelorOps - Automate Your Facebook Videos</title>
-        <meta name="description" content="VelorOps: The ultimate platform for scheduling, managing, and automating your Facebook video content." />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://velorops.com/" />
-        <meta property="og:title" content="VelorOps - Automate Your Facebook Videos" />
-        <meta property="og:description" content="VelorOps: The ultimate platform for scheduling, managing, and automating your Facebook video content." />
-        <meta property="og:image" content="https://velorops.com/og-image.jpg" />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://velorops.com/" />
-        <meta property="twitter:title" content="VelorOps - Automate Your Facebook Videos" />
-        <meta property="twitter:description" content="VelorOps: The ultimate platform for scheduling, managing, and automating your Facebook video content." />
-        <meta property="twitter:image" content="https://velorops.com/og-image.jpg" />
-      </Helmet>
-      
-      <LoadingOverlay isLoading={isLoading} />
-      <Toast 
-        message={toastMessage} 
-        isOpen={isToastOpen} 
-        onClose={() => setIsToastOpen(false)} 
+    <div className="relative">
+      <SEO 
+        title="VelorOps - Automate Your Facebook Videos"
+        description="VelorOps: The ultimate platform for scheduling, managing, and automating your Facebook video content."
+        path="/"
       />
 
       {/* Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-blue-600 origin-left z-[100]"
+        className="fixed top-0 left-0 right-0 h-1 bg-indigo-600 origin-left z-[100]"
         style={{ scaleX }}
       />
 
-      {/* Navigation - Premium Dark Sleek Theme to support White Logo Text perfectly */}
-      <nav className="sticky top-0 z-50 w-full bg-slate-950/90 border-b border-slate-900 backdrop-blur-md transition-colors duration-300 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
-            <div className="flex items-center gap-2">
-              <VelorOpsLogo className="h-16 w-auto" />
-            </div>
-            
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-6">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => scrollToSection(e, link.href)}
-                  className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-2 py-1"
-                >
-                  {link.name}
-                </a>
-              ))}
-              
-              <button 
-                onClick={toggleTheme} 
-                className="p-2 text-slate-300 hover:bg-slate-900 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 overflow-hidden relative flex items-center justify-center w-9 h-9"
-                aria-label="Toggle theme"
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={themeMode}
-                    initial={{ rotate: -90, scale: 0, opacity: 0 }}
-                    animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                    exit={{ rotate: 90, scale: 0, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="absolute flex items-center justify-center"
-                  >
-                    {themeMode === 'light' ? <Sun className="w-5 h-5 text-amber-400" /> : themeMode === 'dark' ? <Moon className="w-5 h-5 text-blue-400" /> : <Monitor className="w-5 h-5" />}
-                  </motion.div>
-                </AnimatePresence>
-              </button>
-              <button className="flex items-center gap-2 bg-slate-900 hover:bg-slate-850 text-white px-5 py-2.5 rounded-lg font-medium border border-slate-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                <Download className="w-4 h-4" />
-                <span>Download</span>
-              </button>
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-md shadow-blue-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
-                <Facebook className="w-4 h-4" />
-                <span>Login</span>
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-4">
-              <button 
-                onClick={toggleTheme} 
-                className="p-2 text-slate-300 hover:bg-slate-900 hover:scale-110 rounded-full transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 overflow-hidden relative flex items-center justify-center w-9 h-9"
-                aria-label="Toggle theme"
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={themeMode}
-                    initial={{ rotate: -90, scale: 0, opacity: 0 }}
-                    animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                    exit={{ rotate: 90, scale: 0, opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="absolute flex items-center justify-center"
-                  >
-                    {themeMode === 'light' ? <Sun className="w-5 h-5 text-amber-400" /> : themeMode === 'dark' ? <Moon className="w-5 h-5 text-blue-400" /> : <Monitor className="w-5 h-5" />}
-                  </motion.div>
-                </AnimatePresence>
-              </button>
-              <button
-                className="p-2 text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-expanded={isMobileMenuOpen}
-                aria-label="Toggle navigation menu"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
-          </div>
+      {/* Hero Section Redesigned with Premium Glassy Look */}
+      <section className="relative pt-24 pb-32 overflow-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-zinc-900 transition-colors duration-300">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-indigo-50/50 dark:from-indigo-900/20 to-transparent pointer-events-none"></div>
+          <div className="absolute -top-[300px] -right-[300px] w-[800px] h-[800px] rounded-full bg-indigo-500/10 dark:bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
+          <div className="absolute -bottom-[300px] -left-[300px] w-[800px] h-[800px] rounded-full bg-violet-500/10 dark:bg-violet-500/10 blur-[100px] pointer-events-none"></div>
         </div>
-
-        {/* Mobile Nav */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden bg-slate-950 border-b border-slate-900 px-4 pt-2 pb-4 space-y-1 overflow-hidden transition-all duration-300 text-white"
-            >
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => scrollToSection(e, link.href)}
-                  className="block px-3 py-3 text-base font-medium text-slate-300 hover:bg-slate-900 hover:text-blue-400 rounded-md transition-colors"
-                >
-                  {link.name}
-                </a>
-              ))}
-              <div className="pt-2 flex flex-col gap-2">
-                <button className="w-full flex justify-center items-center gap-2 bg-slate-900 hover:bg-slate-850 text-white px-4 py-3 rounded-lg font-medium transition-colors border border-slate-800">
-                  <Download className="w-4 h-4" />
-                  <span>Download Desktop App</span>
-                </button>
-                <button className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-                  <Facebook className="w-5 h-5" />
-                  <span>Login with Facebook</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-
-      {/* Hero Section Redesigned with Dual-Grid and Real-Human Interactive Studio Mockup */}
-      <section className="relative pt-20 pb-32 overflow-hidden bg-slate-950 text-white border-b border-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Headline and Copy */}
-            <div className="lg:col-span-5 text-left space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse"></span>
-                Meta Partner Approved Graph API
-              </div>
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 }
+                }
+              }}
+              className="col-span-1 lg:col-span-5 text-center lg:text-left flex flex-col items-center lg:items-start space-y-6 mx-auto lg:mx-0 max-w-2xl lg:max-w-none w-full"
+            >
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, scale: 0.9, y: 20 },
+                  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5 } }
+                }}
+                className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold uppercase tracking-widest shadow-sm"
+              >
+                <span className="flex h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                Introducing Desktop Agent v2.0
+              </motion.div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-br from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+              <motion.h1 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-tight text-gradient"
+              >
                 Automate Your Facebook Videos.
-              </h1>
+              </motion.h1>
               
-              <p className="text-base md:text-lg text-slate-400 leading-relaxed max-w-xl">
+              <motion.p 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="text-lg md:text-xl font-light text-zinc-600 dark:text-zinc-400 leading-relaxed tracking-wide max-w-xl mx-auto lg:mx-0"
+              >
                 Scale your audience distribution effortlessly. Securely connect your official Graph API credentials, schedule videos in bulk, generate AI captions, and access advanced performance telemetry in one place.
-              </p>
+              </motion.p>
 
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-7 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/20">
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4 w-full flex-wrap"
+              >
+                <button 
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-1"
+                >
                   <Facebook className="w-4.5 h-4.5 fill-current" />
                   <span>Connect with Facebook</span>
                 </button>
-                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-850 text-slate-200 px-7 py-3.5 rounded-xl font-bold text-sm border border-slate-800 transition-all">
-                  <Download className="w-4.5 h-4.5" />
-                  <span>Get Desktop App</span>
+                <button 
+                  onClick={() => setIsOnboardingVideoOpen(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 glass hover:bg-white/60 dark:hover:bg-zinc-800/60 text-zinc-900 dark:text-zinc-100 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:-translate-y-1"
+                >
+                  <Video className="w-4.5 h-4.5" />
+                  <span>Take the Tour</span>
                 </button>
-              </div>
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 glass hover:bg-white/60 dark:hover:bg-zinc-800/60 text-zinc-900 dark:text-zinc-100 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:-translate-y-1">
+                  <Download className="w-4.5 h-4.5" />
+                  <span>Download Desktop App</span>
+                </button>
+                <button 
+                  onClick={() => setIsPreviewPanelOpen(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 glass hover:bg-white/60 dark:hover:bg-zinc-800/60 text-zinc-900 dark:text-zinc-100 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:-translate-y-1"
+                >
+                  <Eye className="w-4.5 h-4.5" />
+                  <span>Preview Automation</span>
+                </button>
+              </motion.div>
 
               {/* Trust badges */}
-              <div className="pt-8 border-t border-slate-900/60 flex items-center gap-6 text-xs text-slate-500">
-                <div className="flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-emerald-500" />
-                  <span>32-byte AES Security</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-blue-500" />
-                  <span>No Cron Jobs Needed</span>
-                </div>
-              </div>
-            </div>
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="pt-8 border-t border-zinc-200 dark:border-zinc-900/60 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs text-zinc-500 w-full"
+              >
+                <SecurityTrustBanner />
+              </motion.div>
+            </motion.div>
 
-            {/* Interactive SaaS Studio Mockup Panel */}
-            <div className="lg:col-span-7 w-full">
+            {/* Interactive SaaS Studio Console Panel */}
+            <div className="col-span-1 lg:col-span-7 w-full overflow-hidden">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.98, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.7 }}
-                className="relative"
+                className="relative w-full" style={{ y: y1 }}
               >
-                {/* Decorative glow behind dashboard mockup */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-xl opacity-30 pointer-events-none -z-10"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-indigo-600 rounded-2xl blur-xl opacity-30 pointer-events-none -z-10"></div>
                 <VelorOpsStudio />
               </motion.div>
             </div>
@@ -370,10 +205,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* Modern Section: Facebook Automation System Architecture showcasing the generated illustration */}
-      <section className="py-24 bg-slate-900/40 dark:bg-slate-950 border-b border-slate-900 overflow-hidden relative">
+      {/* Modern Section: Facebook Automation System Architecture */}
+      <section className="py-24 bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-900 overflow-hidden relative transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
             {/* Left Column: Visual illustration framed with extreme developer polish */}
             <motion.div 
@@ -383,75 +218,78 @@ export default function App() {
               variants={fadeInVariants}
               className="relative group"
             >
-              {/* Outer Glow */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-all pointer-events-none"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500/20 to-indigo-500/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-all pointer-events-none"></div>
               
-              <div className="relative bg-slate-950 rounded-2xl border border-slate-800 p-3 overflow-hidden shadow-2xl">
-                {/* Simulated Visual Window Header */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-900 mb-3 text-xs text-slate-500 font-mono">
+              <div className="relative bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3 overflow-hidden shadow-2xl transition-colors duration-300">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-100 dark:border-zinc-900 mb-3 text-xs text-zinc-500 font-mono transition-colors duration-300">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
-                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
-                    <span className="h-2 w-2 rounded-full bg-slate-800"></span>
+                    <span className="h-2 w-2 rounded-full bg-zinc-200 dark:bg-zinc-800 transition-colors"></span>
+                    <span className="h-2 w-2 rounded-full bg-zinc-200 dark:bg-zinc-800 transition-colors"></span>
+                    <span className="h-2 w-2 rounded-full bg-zinc-200 dark:bg-zinc-800 transition-colors"></span>
                   </div>
                   <span>fb_automation_infrastructure_payload.png</span>
                   <ExternalLink className="w-3.5 h-3.5 opacity-60" />
                 </div>
                 
-                {/* The Generated Tech Illustration Image */}
-                <img 
-                  src={fbAutomationIllustration} 
-                  alt="VelorOps Facebook video automation flow diagram and tech architecture visual representation" 
-                  className="w-full h-auto rounded-xl object-cover hover:scale-[1.01] transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
+                <motion.div style={{ y: parallaxY }} className="relative animate-pulse-subtle">
+                  <img 
+                    src={fbAutomationIllustration} 
+                    alt="VelorOps Facebook video automation flow diagram and tech architecture visual representation" 
+                    className="w-full h-auto rounded-xl object-cover hover:scale-[1.01] transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
 
                 {/* Annotation Badges overlay */}
-                <div className="absolute bottom-6 left-6 bg-slate-950/90 border border-slate-800 backdrop-blur-md p-3.5 rounded-xl shadow-xl flex items-center gap-3">
-                  <div className="h-8.5 w-8.5 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                <div className="absolute top-16 right-6 bg-white/90 dark:bg-zinc-950/90 border border-zinc-200 dark:border-zinc-800 backdrop-blur-md px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 transform rotate-2">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Live Sync</span>
+                </div>
+                <div className="absolute bottom-6 left-6 bg-white/90 dark:bg-zinc-950/90 border border-zinc-200 dark:border-zinc-800 backdrop-blur-md p-3.5 rounded-xl shadow-xl flex items-center gap-3 transition-colors duration-300">
+                  <div className="h-8.5 w-8.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     <Server className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-white">VelorOps Automation Engine</span>
-                    <span className="block text-[10px] text-slate-500">Official Graph API v19.0 Integration</span>
+                    <span className="block text-xs font-bold text-zinc-900 dark:text-white">VelorOps Automation Engine</span>
+                    <span className="block text-[10px] text-zinc-500">Official Graph API v19.0 Integration</span>
                   </div>
                 </div>
               </div>
             </motion.div>
 
             {/* Right Column: Architectural Highlights */}
-            <div className="space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
-                <Zap className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="col-span-1 space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start mx-auto lg:mx-0 max-w-2xl lg:max-w-none w-full overflow-hidden">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider transition-colors duration-300">
+                <Zap className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                 High-Performance Automation
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white leading-tight transition-colors duration-300">
                 Engineering Zero-Lag Publishing Protocols
               </h2>
               
-              <p className="text-slate-400 text-base leading-relaxed">
+              <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed text-center lg:text-left transition-colors duration-300">
                 Most platforms schedule videos by running continuous server cron jobs that overload and lead to frequent failures. VelorOps leverages native Meta Graph endpoints to offload queue schedules straight to Facebook servers. 
               </p>
 
-              <div className="space-y-4 pt-4">
+              <div className="space-y-4 pt-4 text-left">
                 <div className="flex gap-4 items-start">
-                  <div className="h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5 transition-colors duration-300">
                     <Check className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Pre-Authorized Chunked Uploads</h4>
-                    <p className="text-xs text-slate-400 mt-1">Easily push heavy 4K videos up to 4GB. Our secure background queue handles chunked uploads automatically.</p>
+                    <h4 className="text-sm font-semibold text-zinc-900 dark:text-white transition-colors duration-300">Pre-Authorized Chunked Uploads</h4>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 transition-colors duration-300">Easily push heavy 4K videos up to 4GB. Our secure background queue handles chunked uploads automatically.</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4 items-start">
-                  <div className="h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5 transition-colors duration-300">
                     <Check className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Encryption Key Rotation</h4>
-                    <p className="text-xs text-slate-400 mt-1">Security-first. Your access tokens are refreshed using randomized salt vectors and encrypted with rotating military-grade hashes.</p>
+                    <h4 className="text-sm font-semibold text-zinc-900 dark:text-white transition-colors duration-300">Encryption Key Rotation</h4>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 transition-colors duration-300">Security-first. Your access tokens are refreshed using randomized salt vectors and encrypted with rotating military-grade hashes.</p>
                   </div>
                 </div>
               </div>
@@ -461,499 +299,235 @@ export default function App() {
         </div>
       </section>
 
-      <FeaturesSection />
-      <ArchitectureSection />
-      <AudienceSection />
-      <RoadmapSection />
+      <SystemStatusSection />
+      <WorkflowCarousel />
+      <StatsSection />
+      <NetworkVolumeChart />
+      <VideoTestimonialsSection />
+      <ImpactMetrics />
 
-      {/* Testimonials Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-900 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInVariants}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors duration-300">Trusted by Creators and Agencies</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto transition-colors duration-300">See how VelorOps is saving time and boosting engagement for our users.</p>
-          </motion.div>
+      <ShareSocial />
+      <FacebookPreviewPanel isOpen={isPreviewPanelOpen} onClose={() => setIsPreviewPanelOpen(false)} />
 
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1 * (index + 1) } }
-                }}
-                className="bg-white dark:bg-slate-950 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col h-full transition-colors duration-300"
-              >
-                <div className="flex gap-1 mb-4 text-amber-400">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-current" />
-                  ))}
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 italic flex-grow mb-6 transition-colors duration-300">"{testimonial.content}"</p>
-                <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white transition-colors duration-300">{testimonial.name}</h4>
-                  <p className="text-sm text-slate-500 dark:text-slate-500 transition-colors duration-300">{testimonial.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInVariants}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors duration-300">Simple, Transparent Pricing</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8 transition-colors duration-300">
-              Stop wasting hours manually posting. Automate your workflow for less than the cost of a coffee.
-            </p>
-            
-            <div className="flex items-center justify-center gap-3">
-              <span className={`text-sm font-medium ${!isAnnual ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>Monthly</span>
-              <button
-                onClick={() => setIsAnnual(!isAnnual)}
-                className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950"
-                role="switch"
-                aria-checked={isAnnual}
-                aria-label="Toggle annual billing"
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isAnnual ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
-              <span className={`text-sm font-medium ${isAnnual ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400'}`}>
-                Yearly <span className="text-green-500 dark:text-green-400 text-xs ml-1 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Save 20%</span>
-              </span>
-            </div>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Starter Plan */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1 } }
-              }}
-              className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 transition-colors duration-300"
-            >
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Starter</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">Perfect for individual creators.</p>
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold text-slate-900 dark:text-white">${isAnnual ? '7' : '9'}</span>
-                <span className="text-slate-500 dark:text-slate-400">/mo</span>
-              </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>1 Facebook Page</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>30 Video Posts / month</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Standard Support</span>
-                </li>
-              </ul>
-              <button className="w-full py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                Get Started
-              </button>
-            </motion.div>
-
-            {/* Pro Plan */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } }
-              }}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-8 border-2 border-blue-500 relative shadow-xl shadow-blue-100 dark:shadow-none transition-colors duration-300 transform md:-translate-y-4"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                Most Popular
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Pro</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">For growing brands and businesses.</p>
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold text-slate-900 dark:text-white">${isAnnual ? '24' : '29'}</span>
-                <span className="text-slate-500 dark:text-slate-400">/mo</span>
-              </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Up to 5 Facebook Pages</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Unlimited Video Posts</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Advanced Analytics</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Priority Support</span>
-                </li>
-              </ul>
-              <button className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 shadow-md">
-                Start Free Trial
-              </button>
-            </motion.div>
-
-            {/* Agency Plan */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.3 } }
-              }}
-              className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 transition-colors duration-300"
-            >
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Agency</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">For teams managing multiple clients.</p>
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold text-slate-900 dark:text-white">${isAnnual ? '79' : '99'}</span>
-                <span className="text-slate-500 dark:text-slate-400">/mo</span>
-              </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Unlimited Facebook Pages</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Unlimited Video Posts</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>Team Members (Up to 5)</span>
-                </li>
-                <li className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-                  <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span>24/7 Dedicated Support</span>
-                </li>
-              </ul>
-              <button className="w-full py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-                Contact Sales
-              </button>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Privacy Policy Section */}
-      <section id="privacy" className="py-24 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeInVariants}
-          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
-        >
-          <div className="bg-white dark:bg-slate-950 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800 transition-colors duration-300">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">Privacy Policy</h2>
-            
-            <div className="space-y-8 text-slate-700 dark:text-slate-300 transition-colors duration-300">
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300">1. Information Collection</h3>
-                <p className="leading-relaxed">
-                  To provide our video automation services, VelorOps collects specific information when you log in using Facebook. This includes your Public Profile, Email Address, and Facebook Access Tokens necessary to publish videos on your behalf.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300">2. Data Usage & Security</h3>
-                <p className="leading-relaxed">
-                  We use your data <strong>exclusively</strong> for scheduling and automating your Facebook video posts. We do not sell, rent, or share your personal data with third parties. All access tokens and sensitive data are secured using 32-byte military-grade encryption at rest within our databases.
-                </p>
-              </div>
-
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-100 dark:border-blue-800/50 transition-colors duration-300">
-                <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-300 mb-3 transition-colors duration-300">3. Data Deletion Instructions</h3>
-                <p className="mb-4">You have full control over your data. To remove VelorOps and delete your data:</p>
-                <ol className="list-decimal pl-5 space-y-2 mb-4 font-medium text-slate-800 dark:text-slate-200 transition-colors duration-300">
-                  <li>Go to your Facebook Account Settings.</li>
-                  <li>Navigate to <strong>Security and Login</strong> {'>'} <strong>Apps and Websites</strong>.</li>
-                  <li>Find "VelorOps" in the list of active apps.</li>
-                  <li>Click <strong>Remove</strong> to revoke all access.</li>
-                </ol>
-                <p>
-                  To request a complete and permanent wipe of your database records from our servers, please contact us. We will process your request within 48 hours.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Terms of Service Section */}
-      <section id="terms" className="py-24 bg-white dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeInVariants}
-          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
-        >
-          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">Terms of Service</h2>
-            
-            <div className="space-y-8 text-slate-700 dark:text-slate-300 transition-colors duration-300">
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300">1. General App Usage</h3>
-                <p className="leading-relaxed">
-                  By accessing and using VelorOps, you agree to these Terms of Service. VelorOps is provided as a tool to assist with video scheduling and automation. You are responsible for the content you upload and schedule through our platform.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300">2. Facebook Integration Rules</h3>
-                <p className="leading-relaxed">
-                  VelorOps utilizes the official Facebook Graph API. As a user of our service, you must strictly follow Facebook's Community Standards and Terms of Service. Any violation of Meta's policies (including spamming, hate speech, or prohibited content) will result in immediate termination of your VelorOps account.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300">3. Limitation of Liability</h3>
-                <p className="leading-relaxed">
-                  VelorOps is provided "as is". We are not liable for any temporary suspensions, reach limitations, or account restrictions placed on your Facebook account by Meta. We do not guarantee specific engagement metrics or uninterrupted service availability.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="py-24 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInVariants}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors duration-300">Frequently Asked Questions</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 transition-colors duration-300">Got questions? We've got answers.</p>
-          </motion.div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div 
-                key={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.1 * index } }
-                }}
-                className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden transition-colors duration-300"
-              >
-                <button
-                  onClick={() => toggleFaq(index)}
-                  className="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-                  aria-expanded={openFaqIndex === index}
-                >
-                  <span className="font-semibold text-slate-900 dark:text-white transition-colors duration-300">{faq.question}</span>
-                  {openFaqIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0 transition-colors duration-300" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0 transition-colors duration-300" />
-                  )}
-                </button>
-                <AnimatePresence>
-                  {openFaqIndex === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="absolute flex items-center justify-center"
-                    >
-                      <div className="px-6 pb-5 text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-200 dark:border-slate-800 pt-4 transition-colors duration-300">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 dark:bg-slate-950 text-slate-400 py-12 border-t border-slate-800 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-              <VelorOpsLogo className="h-14 w-auto" />
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="#privacy" 
-                onClick={(e) => scrollToSection(e, '#privacy')}
-                className="px-4 py-2 rounded-lg bg-slate-800 dark:bg-slate-900 hover:bg-slate-700 dark:hover:bg-slate-800 text-slate-300 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
-                Privacy Policy
-              </a>
-              <a 
-                href="#terms" 
-                onClick={(e) => scrollToSection(e, '#terms')}
-                className="px-4 py-2 rounded-lg bg-slate-800 dark:bg-slate-900 hover:bg-slate-700 dark:hover:bg-slate-800 text-slate-300 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
-                Terms of Service
-              </a>
-            </div>
-
-            <button 
-              onClick={() => setIsContactModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-              aria-haspopup="dialog"
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span>Contact Us</span>
-            </button>
-          </div>
-          
-          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} VelorOps. All rights reserved.</p>
-            <p className="mt-2 text-slate-500">Not affiliated with or endorsed by Meta Platforms, Inc.</p>
-          </div>
-        </div>
-      </footer>
-
-      {/* Contact Modal */}
+      {/* Onboarding Product Tour Modal */}
       <AnimatePresence>
-        {isContactModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        {isOnboardingVideoOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-sm"
-              onClick={() => setIsContactModalOpen(false)}
+              className="absolute inset-0 bg-zinc-950/85 backdrop-blur-md"
+              onClick={() => {
+                setIsOnboardingVideoOpen(false);
+                setOnboardingStep(0);
+              }}
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden z-10 transition-colors duration-300"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title"
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="relative w-full max-w-3xl bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden text-zinc-100 flex flex-col md:flex-row h-[520px] md:h-[450px]"
             >
-              <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 transition-colors duration-300">
-                <h3 id="modal-title" className="text-xl font-bold text-slate-900 dark:text-white transition-colors duration-300">Contact Support</h3>
-                <button 
-                  onClick={() => setIsContactModalOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+              <button 
+                onClick={() => {
+                  setIsOnboardingVideoOpen(false);
+                  setOnboardingStep(0);
+                }}
+                className="absolute top-4 right-4 z-50 p-2 bg-zinc-800/80 hover:bg-zinc-700/85 text-zinc-400 hover:text-white rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                aria-label="Close walkthrough"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Sidebar: Step progress tracker list */}
+              <div className="w-full md:w-64 bg-zinc-950 p-6 flex flex-col justify-between border-b md:border-b-0 md:border-r border-zinc-800 shrink-0">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-white tracking-tight">VelorOps Tour</h3>
+                    <p className="text-xs text-zinc-400 mt-1">Four steps to absolute automation.</p>
+                  </div>
+                  <nav className="space-y-2.5 hidden md:block">
+                    {[
+                      { num: "01", name: "Authentication" },
+                      { num: "02", name: "Chunked Uploads" },
+                      { num: "03", name: "AI Cap & Hashtags" },
+                      { num: "04", name: "Reliable Scheduler" }
+                    ].map((step, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setOnboardingStep(idx)}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-xs transition-all ${
+                          onboardingStep === idx
+                            ? "bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-bold"
+                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50 border border-transparent"
+                        }`}
+                      >
+                        <span className="font-mono text-[10px] opacity-70">{step.num}</span>
+                        <span>{step.name}</span>
+                      </button>
+                    ))}
+                  </nav>
+                </div>
+                <div className="flex items-center justify-between text-xs text-zinc-500 font-mono mt-4 md:mt-0">
+                  <span>VELOROPS OS v2.0</span>
+                  <span>{onboardingStep + 1} / 4</span>
+                </div>
               </div>
-              <div className="p-6">
-                <form className="space-y-4" onSubmit={(e) => { 
-                  e.preventDefault(); 
-                  if (!emailError && email && message) {
-                    setIsContactModalOpen(false); 
-                    setToastMessage('Message sent successfully!');
-                    setIsToastOpen(true);
-                    setEmail('');
-                    setMessage('');
-                  }
-                }}>
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-300">Name</label>
-                    <input 
-                      type="text" 
-                      id="name" 
-                      required 
-                      className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
-                      placeholder="Your Name" 
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-300">Email</label>
-                    <div className="relative">
-                      <input 
-                        type="email" 
-                        id="email" 
-                        required 
-                        value={email}
-                        onChange={(e) => validateEmail(e.target.value)}
-                        className={`w-full px-4 py-2 rounded-lg border ${emailError ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'} bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all`} 
-                        placeholder="you@example.com" 
-                        aria-invalid={emailError ? "true" : "false"}
-                        aria-describedby={emailError ? "email-error" : undefined}
-                      />
-                      {emailError && (
-                        <div className="absolute right-3 top-2.5 text-red-500">
-                          <AlertCircle className="w-5 h-5" />
-                        </div>
-                      )}
-                    </div>
-                    {emailError && <p id="email-error" className="mt-1 text-xs text-red-500">{emailError}</p>}
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-300">Message</label>
-                      <span className={`text-xs ${message.length > maxMessageLength ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'}`}>
-                        {message.length} / {maxMessageLength}
-                      </span>
-                    </div>
-                    <textarea 
-                      id="message" 
-                      required 
-                      rows={4} 
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className={`w-full px-4 py-2 rounded-lg border ${message.length > maxMessageLength ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'} bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all resize-none`} 
-                      placeholder="How can we help you?"
-                      aria-invalid={message.length > maxMessageLength ? "true" : "false"}
-                    ></textarea>
-                  </div>
-                  <button 
-                    type="submit" 
-                    disabled={!!emailError || message.length > maxMessageLength || !email || !message}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+
+              {/* Step Content Slide */}
+              <div className="flex-grow p-6 md:p-8 flex flex-col justify-between overflow-y-auto">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={onboardingStep}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25 }}
+                    className="space-y-5 flex-1 flex flex-col justify-center"
                   >
-                    Send Message
+                    {[
+                      {
+                        title: "Secure Graph API Integration",
+                        description: "Connect your official Facebook account using Meta's standard OAuth protocols. Your user access tokens are refreshed using randomized salt vectors and locked with 32-byte military-grade database encryption at rest.",
+                        icon: <Facebook className="w-12 h-12 text-indigo-500" />,
+                        tag: "STEP 1: SECURE AUTHENTICATION",
+                        highlights: ["AES-256 GCM Key Rotation", "Official Meta Graph API", "One-Click Token Health Check"]
+                      },
+                      {
+                        title: "Chunked High-Definition Uploads",
+                        description: "VelorOps takes heavy 4K content streams of up to 4GB and partitions them into chunked background tasks. This guarantees seamless publishing with automatic network resume, so you never lose connection during long video uploads.",
+                        icon: <Upload className="w-12 h-12 text-indigo-500" />,
+                        tag: "STEP 2: HIGH-SPEED INGESTION",
+                        highlights: ["Network Fault Recovery", "Saves up to 4GB per file", "Optimized Video Transcoding Preview"]
+                      },
+                      {
+                        title: "Context-Aware AI Captions",
+                        description: "Optimize metadata and caption keywords using built-in Gemini API templates. Easily adjust writing tones, add hashtag suggestions, correct grammar, and translate copy to match local demographic patterns in real time.",
+                        icon: <Sparkles className="w-12 h-12 text-indigo-500" />,
+                        tag: "STEP 3: CONTENT ENRICHMENT",
+                        highlights: ["Instant Sentiment Analyzer", "Smart Hashtag & Emoji Inserter", "Multi-Language Localization"]
+                      },
+                      {
+                        title: "Offloaded Background Scheduler",
+                        description: "Avoid local browser timers. VelorOps uploads and structures queues natively onto Facebook's servers. Our continuous background runner takes over, giving you real-time latency diagnostics and instant webhook delivery alerts.",
+                        icon: <Server className="w-12 h-12 text-indigo-500" />,
+                        tag: "STEP 4: ROBUST DEPLOYMENT",
+                        highlights: ["Server-Authoritative Calendars", "Real-Time Webhook Diagnostics", "Low-Latency Cron Monitoring"]
+                      }
+                    ].map((step, idx) => onboardingStep === idx && (
+                      <React.Fragment key={idx}>
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-zinc-800 rounded-2xl border border-zinc-700/60 shrink-0">
+                            {step.icon}
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-mono font-bold text-indigo-400 tracking-wider block mb-0.5">{step.tag}</span>
+                            <h4 className="text-xl font-bold text-white tracking-tight">{step.title}</h4>
+                          </div>
+                        </div>
+
+                        <p className="text-sm text-zinc-400 leading-relaxed max-w-lg">
+                          {step.description}
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          {step.highlights.map((highlight, hIdx) => (
+                            <div key={hIdx} className="flex items-center gap-2 text-xs text-zinc-300">
+                              <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                              <span>{highlight}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </React.Fragment>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Footer Controls */}
+                <div className="flex items-center justify-between pt-6 border-t border-zinc-800 mt-6 shrink-0">
+                  <button
+                    disabled={onboardingStep === 0}
+                    onClick={() => setOnboardingStep(prev => prev - 1)}
+                    className="flex items-center gap-1 text-sm font-semibold text-zinc-400 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-400 transition-colors focus:outline-none"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>Back</span>
                   </button>
-                </form>
+
+                  <div className="flex gap-1.5 md:hidden">
+                    {[0, 1, 2, 3].map((dot) => (
+                      <div
+                        key={dot}
+                        className={`h-1.5 rounded-full transition-all ${
+                          onboardingStep === dot ? "w-6 bg-indigo-500" : "w-1.5 bg-zinc-800"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {onboardingStep < 3 ? (
+                    <button
+                      onClick={() => setOnboardingStep(prev => prev + 1)}
+                      className="flex items-center gap-1 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/10 transition-all focus:outline-none"
+                    >
+                      <span>Continue</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsOnboardingVideoOpen(false);
+                        setOnboardingStep(0);
+                      }}
+                      className="flex items-center gap-1 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/10 transition-all focus:outline-none"
+                    >
+                      <span>Get Started</span>
+                      <Check className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      {/* Back to Top FAB */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-8 right-8 z-50 p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-xl shadow-indigo-500/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            aria-label="Back to top"
+          >
+            <ChevronUp className="w-6 h-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/data-deletion" element={<DataDeletionPage />} />
+        </Route>
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

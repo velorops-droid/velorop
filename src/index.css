@@ -1,6 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-zinc-50: #f4f6fa;
+  --color-zinc-100: #e8ebf3;
+  --color-zinc-200: #d0d6e3;
+  --color-zinc-300: #aeb6c9;
+  --color-zinc-400: #8b96ab;
+  --color-zinc-500: #6a768e;
+  --color-zinc-600: #525d73;
+  --color-zinc-700: #3f4859;
+  --color-zinc-800: #1b1e2a;
+  --color-zinc-900: #0f111a;
+  --color-zinc-950: #08090e;
+
+  --color-indigo-50: #eef5ff;
+  --color-indigo-100: #d9e7ff;
+  --color-indigo-200: #b8d2ff;
+  --color-indigo-300: #8ab6ff;
+  --color-indigo-400: #5793ff;
+  --color-indigo-500: #296dff;
+  --color-indigo-600: #0052ff;
+  --color-indigo-700: #0045d6;
+  --color-indigo-800: #0037ab;
+  --color-indigo-900: #002e8c;
+  --color-indigo-950: #001c5c;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
-html {
+html, body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+@utility animate-marquee {
+  animation: marquee 50s linear infinite;
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-800/50 shadow-xl;
+  }
+  .glass-card {
+    @apply bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl shadow-indigo-500/5;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-br from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent;
+  }
+}
+html {
+  scroll-snap-type: y proximity;
+}
+
+section, footer {
+  scroll-snap-align: start;
+  scroll-margin-top: 80px;
 }
